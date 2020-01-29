@@ -12,3 +12,7 @@
 
 ​		utils存放了图片预处理的脚本PreProcess.py、将标签转换为独热编码的OneHotEncoder.py、还有读取批次数据的GetBatch.py
 
+## 修复Bug
+
+#### 1.Version1.0-OneHotEncoder.py
+读取数据时，类别数大于2且数据不平衡，编码错误的bug

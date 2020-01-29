@@ -1,14 +1,15 @@
 import numpy as np
 
-def onehot_encoder(labels):
+def onehot_encoder(labels, classes):
     """
         将标签转换成独热编码
         例如：现有猫狗两种类别，标签为猫0、狗1；那么转换成独热编码就是猫[1,0]，狗[0,1]
+        读取数据的时候不一定读到最大的标签
     """
 
     # 得到样例数和标签数
     n_samples = len(labels)
-    n_classes = max(labels) + 1
+    n_classes = classes
 
     # 生成一个n_samples行n_classes列的元组
     onehot_labels = np.zeros((n_samples, n_classes))
