@@ -5,8 +5,9 @@ from modelZoo.AbstractModel import AbstractModel
 class VGG16(AbstractModel):
     """Visual Geometry Group 16"""
 
-    def __init__(self, imgs):
+    def __init__(self, imgs, num_of_classes):
         self.imgs = imgs
+        self.num_of_classes = num_of_classes
         self.parameters = []
 
         self.conv_layers()
@@ -45,7 +46,7 @@ class VGG16(AbstractModel):
         """3个全连接层设计"""
         self.fc6 = self.fc('fc1', self.pool5, 4096, trainable=False)
         self.fc7 = self.fc('fc2', self.fc6, 4096, trainable=False)
-        self.fc8 = self.fc('fc3', self.fc7, 2, trainable=True)
+        self.fc8 = self.fc('fc3', self.fc7, self.num_of_classes, trainable=True)
 
     def loadweights(self, weight_file, sess):
         """加载模型"""

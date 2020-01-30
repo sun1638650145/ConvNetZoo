@@ -11,7 +11,8 @@ def get_file(file_dir):
     # os.walk返回的是root(文件夹本身地址)sub_dirs(文件夹下目录地址)files(文件夹下文件地址)
     for root, sub_dirs, files in os.walk(file_dir):
         for name in files:
-            images.append(os.path.join(root, name))
+            if name != '.DS_store':
+                images.append(os.path.join(root, name))
         for name in sub_dirs:
             classes.append(os.path.join(root, name))
 
