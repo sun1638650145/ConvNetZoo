@@ -95,7 +95,7 @@ with tf.name_scope('Train'):
 
     for epoch in range(start, train_epochs):
         images, labels = sess.run([image_batch, label_batch])
-        labels = utils.onehot_encoder(labels)
+        labels = utils.onehot_encoder(labels, num_of_classes)
 
         _, summary_str, loss, acc = sess.run([optimizer, merged_summary_op, loss_function, accuracy], feed_dict={x: images, y: labels})
 
