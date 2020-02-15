@@ -1,4 +1,7 @@
 import tensorflow as tf
+import numpy as np
+import imageio
+from PIL import Image
 
 RESZIE_SIDE_MIN = 256
 RESZIE_SIDE_MAX = 512
@@ -170,3 +173,15 @@ def preprocessed_for_train(images, output_height, output_witdh, resize_side_min=
     images = tf.image.random_flip_left_right(images)
 
     return mean_images_subtraction(images, [R_MEAN, G_MEAN, B_MEAN])
+
+def preprocessed_for_predict(images, net_size):
+    """对输入的图片进行预处理"""
+    preprocessed_images = imageio.imread(images)
+    preprocessed_images = np.asarray(Image.fromarray(preprocessed_images).resize((net_size, net_size)))
+    preprocessed_images = preprocessed_images.astype(np.float32)
+
+    MEANS = [R_MEAN, G_MEAN, B_MEAN]
+    for channel in range(3):
+        preprocessed_images[:, :, channel] -= MEANS[channel]
+
+    return preprocessed_images

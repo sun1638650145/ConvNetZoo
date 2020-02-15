@@ -1,0 +1,83 @@
+<!--请使用Webstorm和Chrome浏览器，不需要编译，笔者有些WebGL和前端东西还没有弄明白-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>猫狗大战</title>
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.15.3/dist/tf.min.js"></script>
+    </head>
+    <body>
+        <center>hello tensorflow.js<br></center>
+        <center><input type="file" onchange="selectImage(this);"/><br></center>
+        <script>
+            // 获取图片并显示
+            function selectImage(file) {
+                if (!file.files || !file.files[0]) {
+                    return;
+                }
+                var reader = new FileReader();
+                reader.onload = function (evt) {
+                    document.getElementById('image').src = evt.target.result;
+                    image.src = document.getElementById('image').src;
+                };
+                reader.readAsDataURL(file.files[0]);
+            }
+        </script>
+        <center><img id="image" src=""/></center>
+        <script>
+            // 预处理图像
+            var image = new Image();
+            var inputImage;
+            image.onload = function () {
+                console.log("图片加载成功");
+                inputImage = preprocess(image);
+                console.log("图片预处理成功");
+            };
+            image.onerror = function () {
+                alert("你放的怕不是图片，本AI无能为力");
+            };
+
+            function preprocess(image) {
+                return tf.tidy(() => {
+                    const tensor = tf.fromPixels(image);
+                    const resized = tf.image.resizeBilinear(tensor, [224, 224]).toFloat();
+                    const batched = resized.expandDims(0);
+                    return batched;
+                })
+            }
+        </script>
+        <center><input name="button" type="button" onclick="Predict(this.Image)" value="猜猜你放的是什么"></center>
+        <script>
+            // 加载模型
+            const Model_URL = "web_model/tensorflowjs_model.pb";// 注意路径加载，很有可能有问题
+            const Weight_URL = "web_model/weights_manifest.json";// 不使用parcel，会编译报错
+            var cmodel;
+            tf.loadFrozenModel(
+                Model_URL,
+                Weight_URL
+            ).then((model) => {
+                cmodel = model;
+            });
+            // cmodel = await tf.loadFrozenModel(Model_URL, Weight_URL);
+            console.log("模型加载成功");
+        </script>
+        <script>
+            // 模型预测
+            const List = ["猫","狗"];
+            function Predict() {
+                return tf.tidy(() => {// WebGL显存回收
+                    const beginTime = new Date();
+                    const result = cmodel.predict([inputImage]);
+                    const endTime = new Date();
+                    result.print();
+
+                    const l = result.dataSync();
+                    const max = Math.max.apply(null, l);
+                    const index = l.indexOf(max);
+                    alert("这是一只" + List[index] + "\n");
+                    console.log("计算耗时:" + (endTime - beginTime)/1000 + "s");
+                })
+            }
+        </script>
+    </body>
+</html>
