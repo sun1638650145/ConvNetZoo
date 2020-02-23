@@ -13,7 +13,7 @@ gpu_options = tf.GPUOptions(allow_growth=True)
 LOG_DIR = 'log/'
 CKPT_DIR = 'ckpt/'
 TRAIN_DATASETS_DIR = 'train/'
-VGG_INITIAL_WEIGHTS = 'inception_v1.ckpt'
+INITIAL_WEIGHTS = 'inception_v1.ckpt'
 if not os.path.exists(LOG_DIR):
     os.makedirs(LOG_DIR)
 if not os.path.exists(CKPT_DIR):
@@ -78,7 +78,7 @@ sess.run(init)
 """执行训练"""
 with tf.name_scope('Train'):
     # 加载初始权重
-    cmodel.loadweights(VGG_INITIAL_WEIGHTS, sess, saver_pre)
+    cmodel.loadweights(INITIAL_WEIGHTS, sess, saver_pre)
 
     # 如果有断点加载断点
     ckpt = tf.train.latest_checkpoint(CKPT_DIR)
