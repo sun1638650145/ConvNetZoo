@@ -1,3 +1,4 @@
+import os
 import sys
 import numpy as np
 import tensorflow as tf
@@ -7,6 +8,7 @@ sys.path.append("..")
 from utils import PreProcess
 from modelZoo import AlexNet
 from modelZoo import VGG16
+from modelZoo import GoogLeNet
 
 def compute_time(function):
     """计算测试时间"""
@@ -21,7 +23,7 @@ def compute_time(function):
     return wrapper
 
 @compute_time
-def predict_with_ckpt(image, net_size, model_name, num_of_classes, ckpt_dir, predict_list):
+def predict_with_ckpt_singlephoto(image, net_size, model_name, num_of_classes, ckpt_dir, predict_list):
     """使用检查点进行预测"""
 
     # 对输入的图片进行预处理
@@ -34,6 +36,9 @@ def predict_with_ckpt(image, net_size, model_name, num_of_classes, ckpt_dir, pre
         predict = cmodel.pred
     elif model_name == 'VGG16':
         cmodel = VGG16(input_tensor, num_of_classes)
+        predict = cmodel.pred
+    elif model_name == 'GoogLeNet':
+        cmodel = GoogLeNet(input_tensor, num_of_classes)
         predict = cmodel.pred
 
     # 生成saver
@@ -53,6 +58,49 @@ def predict_with_ckpt(image, net_size, model_name, num_of_classes, ckpt_dir, pre
     sess.close()
 
     return prob, predict_list[index]
+
+@compute_time
+def predict_with_ckpt(images_dir, net_size, model_name, num_of_classes, ckpt_dir, predict_list):
+    """使用检查点进行预测"""
+
+    # 复现模型
+    input_tensor = tf.placeholder(tf.float32, shape=[None, net_size, net_size, 3])
+    if model_name == 'AlexNet':
+        cmodel = AlexNet(input_tensor, num_of_classes)
+        predict = cmodel.pred
+    elif model_name == 'VGG16':
+        cmodel = VGG16(input_tensor, num_of_classes)
+        predict = cmodel.pred
+    elif model_name == 'GoogLeNet':
+        cmodel = GoogLeNet(input_tensor, num_of_classes)
+        predict = cmodel.pred
+
+    # 生成saver
+    saver = tf.train.Saver()
+
+    sess = tf.Session()
+    init = tf.global_variables_initializer()
+    sess.run(init)
+
+    ckpt = tf.train.latest_checkpoint(ckpt_dir)
+    saver.restore(sess, ckpt)
+
+    # 进行预测
+    prob_list = []
+    ans_list = []
+    for i in range(len(os.listdir(images_dir))):
+        # 对输入的图片进行预处理
+        image = images_dir + str(i) + '.jpg'
+        img = PreProcess.preprocessed_for_predict(image, net_size)
+
+        prob = sess.run(predict, feed_dict={input_tensor: [img]})
+        prob_list.append(prob)
+        index = np.argmax(prob)
+        ans_list.append(index)
+
+    sess.close()
+
+    return prob_list, ans_list
 
 @compute_time
 def predict_with_pb(image, net_size, pb_dir, predict_list):

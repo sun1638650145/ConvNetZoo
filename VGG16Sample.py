@@ -27,7 +27,7 @@ learning_rate = 1e-3
 train_epochs = 1000
 epoch_num = tf.Variable(1, name='epoch_num', trainable=False)
 display_step = 10
-num_of_classes = 2
+num_of_classes = 4
 
 """神经网络参数"""
 x = tf.placeholder(tf.float32, shape=[None, 224, 224, 3], name='x')
