@@ -1,6 +1,4 @@
-# ConvNetZoo(一个迁移学习卷积模型库)
-
-​		现如今，众多依靠计算机视觉实现的技术都离不开对预训练的卷积神经网络模型的使用。笔者入行机器学习一年多，每次对图像分类、风格迁移以及目标检测等问题需要重新复现神经网络模型深感头疼，于是乎，开发了这个卷积神经网络库，将陆续支持主流的开源神经网络模型（例如AlexNet(已支持)、VGGNet(已支持)、InceptionNet(已支持部分)、ResNet、MobileNet等）
+# ConvNetZoo(TensorFlow模型入门库)
 
 ## 项目结构
 
@@ -44,6 +42,10 @@
 1. 支持不使用Batch Normalization实现的InceptionV1(GoogLeNet)
 3. 优化代码，修复早期架构GPU没有cudnn加速的BUG
 3. 支持预测多张图片，并到导出到csv文件
+
+### Version 1.4
+
+1. 更新了tensorflow.js 的代码，升级到tensorflow.js 2.0
 
 ## 预训练模型下载链接
 
